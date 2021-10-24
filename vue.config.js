@@ -1,4 +1,29 @@
+// https://www.npmjs.com/package/webpack-bundle-analyzer
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+// https://www.npmjs.com/package/git-revision-webpack-plugin
+const GitRevisionPlugin = require('git-revision-webpack-plugin');
+const gitRevisionPlugin = new GitRevisionPlugin({
+  branch: true,
+});
+
+const package = require('./package.json');
+const gitInfo = {
+  VERSION: gitRevisionPlugin.version(),
+  COMMITHASH: gitRevisionPlugin.commithash(),
+  BRANCH: gitRevisionPlugin.branch(),
+};
+// 模板参数，应用 index.html
+const templateParameters = {
+  nowTimeString: new Date().toISOString(),
+  // package.json信息
+  package,
+  // 进程信息
+  process: {
+    env: process.env,
+  },
+  // git信息
+  gitInfo,
+};
 
 module.exports = {
   //  multi-page 模式, entry设置
@@ -11,13 +36,13 @@ module.exports = {
       title: '',
       // 在这个页面中包含的块，默认情况下会包含
       // 提取出来的通用 chunk 和 vendor chunk。
-      chunks: ['chunk-vendors', 'chunk-common', 'index']
+      chunks: ['chunk-vendors', 'chunk-common', 'index'],
     },
     // 当使用只有入口的字符串格式时，
     // 模板会被推导为 `public/second.html`
     // 并且如果找不到的话，就回退到 `public/index.html`。
     // 输出文件名会被推导为 `second.html`。
-    second: 'src/second/main.ts'
+    second: 'src/second/main.ts',
   },
   // 使用相对路径
   publicPath: '',
@@ -36,11 +61,11 @@ module.exports = {
   //设置生成的 HTML 中 <link rel="stylesheet"> 和 <script> 标签的 crossorigin 属性。
   crossorigin: 'anonymous',
   //
-  configureWebpack: config => {
+  configureWebpack: (config) => {
     if (process.env.NODE_ENV === 'production') {
       // 为生产环境修改配置...
     } else {
-      config.plugins.push(new BundleAnalyzerPlugin())
+      config.plugins.concat([new BundleAnalyzerPlugin(), gitRevisionPlugin]);
     }
-  }
-}
+  },
+};
