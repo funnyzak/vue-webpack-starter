@@ -2,10 +2,11 @@
 
 ## 说明
 
-Vue 快速开始脚手架。
+Vue **3.0.0** 快速开始脚手架。
 
 支持包含：
 
+-   multi-page 支持
 -   babel 转换
 -   typescript 支持
 -   jest 支持
