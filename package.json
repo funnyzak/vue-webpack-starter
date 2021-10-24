@@ -64,6 +64,10 @@
       "prettier --write",
       "vue-cli-service lint",
       "git add"
+    ],
+    "*.{md,html,json,css,less,scss,sass}": [
+      "prettier --write",
+      "git add"
     ]
   }
 }
