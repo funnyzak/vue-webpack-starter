@@ -34,5 +34,6 @@ module.exports = {
     'import/extensions': 'off',
     'no-use-before-define': 'off',
     'no-var-requires': 'off',
+    'import/no-commonjs': 'warn'
   },
 };
