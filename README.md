@@ -1,8 +1,11 @@
 # Vue Quick Start
+
 ## 说明
+
 Vue 快速开始脚手架。
 
 支持包含：
+
 -   babel 转换
 -   typescript 支持
 -   jest 支持
@@ -46,10 +49,9 @@ Vue 快速开始脚手架。
 
 -   源构建输出：`./dist`
 
-
 ## 参考
 
-- [Configuration Reference](https://cli.vuejs.org/zh/config/).
+-   [Configuration Reference](https://cli.vuejs.org/zh/config/).
 -   [Babel Config](https://babel.docschina.org/docs/en/7.0.0/configuration/)
 -   [EsLint](https://eslint.org/docs/user-guide/configuring/)
 -   [eslintignore-file](https://eslint.org/docs/user-guide/configuring/ignoring-code#the-eslintignore-file)
