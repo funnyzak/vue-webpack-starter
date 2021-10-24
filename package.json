@@ -1,7 +1,23 @@
 {
   "name": "vue-quick-start",
-  "version": "0.1.0",
+  "description": "vue-quick-start",
+  "version": "1.0.0",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/funnyzak/vue-quick-start.git"
+  },
+  "keywords": [
+    "vue",
+    "typescript",
+    "webpack"
+  ],
+  "author": "funnyzak <silenceace@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/funnyzak/vue-quick-start/issues"
+  },
+  "homepage": "https://github.com/funnyzak/vue-quick-start#readme",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
