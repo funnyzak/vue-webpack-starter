@@ -1,11 +1,8 @@
 # Vue Quick Start
-
 ## 说明
-
 Vue 快速开始脚手架。
 
 支持包含：
-
 -   babel 转换
 -   typescript 支持
 -   jest 支持
@@ -17,7 +14,7 @@ Vue 快速开始脚手架。
 
 ### 运行
 
-最新 Tags 自动打包：[点这里打开]
+最新 Tags 自动打包：[点这里打开](https://funnyzak.github.io/vue-quick-start/)
 
 ## 环境
 
