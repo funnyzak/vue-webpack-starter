@@ -1,3 +1,4 @@
+const path = require('path')
 // https://www.npmjs.com/package/webpack-bundle-analyzer
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 // https://www.npmjs.com/package/git-revision-webpack-plugin
@@ -12,7 +13,9 @@ const gitInfo = {
   COMMITHASH: gitRevisionPlugin.commithash(),
   BRANCH: gitRevisionPlugin.branch()
 };
-// 模板参数，应用 index.html
+
+// 模板参数，应用 template html
+// 可在html 使用如： <%=webpackConfig.externals.gitInfo.BRANCH%>
 const templateParameters = {
   nowTimeString: new Date().toISOString(),
   // package.json信息
@@ -24,6 +27,10 @@ const templateParameters = {
   // git信息
   gitInfo
 };
+
+function resolve(dir) {
+  return path.join(__dirname, dir)
+}
 
 module.exports = {
   //  multi-page 模式, entry设置
@@ -60,12 +67,76 @@ module.exports = {
   productionSourceMap: false,
   //设置生成的 HTML 中 <link rel="stylesheet"> 和 <script> 标签的 crossorigin 属性。
   crossorigin: 'anonymous',
-  //
+  devServer: {
+    host: '0.0.0.0',
+    port: '2085',
+    overlay: {
+      warnings: false,
+      errors: true
+    },
+    // 代理设置
+    proxy: {
+      // detail:https://github.com/chimurai/http-proxy-middleware#proxycontext-config
+      '/api': {
+        target: 'https://request.worktile.com/6n6gHbBDL',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/api/old-path': '/api/new-path', // rewrite path
+          '^/api/remove/path': '/path', // remove base path
+        },
+      },
+    }
+  },
+  // webpack 配置
   configureWebpack: (config) => {
+    // config.resolve.alias['@'] = 'src'
+
+    // 注入变量
+    config.externals = Object.assign({}, config.externals, templateParameters)
+
     if (process.env.NODE_ENV === 'production') {
       // 为生产环境修改配置...
     } else {
       config.plugins.concat([new BundleAnalyzerPlugin(), gitRevisionPlugin]);
     }
+  },
+  // 是一个函数，会接收一个基于 webpack-chain 的 ChainableConfig 实例。允许对内部的 webpack 配置进行更细粒度的修改。
+  // https://cli.vuejs.org/zh/guide/webpack.html#%E9%93%BE%E5%BC%8F%E6%93%8D%E4%BD%9C-%E9%AB%98%E7%BA%A7
+  chainWebpack: config => {
+    config.module
+      .rule('vue')
+      .use('vue-loader')
+      .tap(options => {
+        // 修改它的选项...
+        return options
+      })
+
+    config.optimization.splitChunks({
+      chunks: 'all',
+      cacheGroups: {
+        libs: {
+          name: 'chunk-libs',
+          test: /[\\/]node_modules[\\/]/,
+          priority: 10,
+          chunks: 'initial' // only package third parties that are initially dependent
+        },
+        elementUI: {
+          name: 'chunk-elementUI', // split elementUI into a single package
+          priority: 20, // the weight needs to be larger than libs and app or it will be packaged into libs or app
+          test: /[\\/]node_modules[\\/]_?element-ui(.*)/ // in order to adapt to cnpm
+        },
+        commons: {
+          name: 'chunk-commons',
+          test: resolve('src/components'), // can customize your rules
+          minChunks: 3, //  minimum common number
+          priority: 5,
+          reuseExistingChunk: true
+        }
+      }
+    })
+  },
+  // css 配置
+  css: {
+    sourceMap: process.env.NODE_ENV !== 'production'
   }
 };
