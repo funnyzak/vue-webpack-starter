@@ -66,7 +66,7 @@ module.exports = {
   // 生产环境不生成sourcemap
   productionSourceMap: false,
   //设置生成的 HTML 中 <link rel="stylesheet"> 和 <script> 标签的 crossorigin 属性。
-  crossorigin: 'anonymous',
+  // crossorigin: 'anonymous',
   devServer: {
     host: '0.0.0.0',
     port: '2085',
@@ -111,29 +111,27 @@ module.exports = {
         return options
       })
 
-    config.optimization.splitChunks({
-      chunks: 'all',
-      cacheGroups: {
-        libs: {
-          name: 'chunk-libs',
-          test: /[\\/]node_modules[\\/]/,
-          priority: 10,
-          chunks: 'initial' // only package third parties that are initially dependent
-        },
-        elementUI: {
-          name: 'chunk-elementUI', // split elementUI into a single package
-          priority: 20, // the weight needs to be larger than libs and app or it will be packaged into libs or app
-          test: /[\\/]node_modules[\\/]_?element-ui(.*)/ // in order to adapt to cnpm
-        },
-        commons: {
-          name: 'chunk-commons',
-          test: resolve('src/components'), // can customize your rules
-          minChunks: 3, //  minimum common number
-          priority: 5,
-          reuseExistingChunk: true
-        }
-      }
-    })
+    // https://webpack.docschina.org/plugins/split-chunks-plugin/#splitchunkscachegroups
+    // config.optimization.splitChunks({
+    //   chunks: 'all',
+    //   minSize: 1000,
+    //   minChunks: 1,
+    //   maxAsyncRequests: 30,
+    //   maxInitialRequests: 30,
+    //   cacheGroups: {
+    //     libs: {
+    //       name: 'chunk-libs',
+    //       test: /[\\/]node_modules[\\/]/,
+    //       priority: 30,
+    //       chunks: 'initial' // only package third parties that are initially dependent
+    //     },
+    //     page: {
+    //       name: 'page',
+    //       priority: 20,
+    //       chunks: 'initial'
+    //     },
+    //   }
+    // })
   },
   // css 配置
   css: {
