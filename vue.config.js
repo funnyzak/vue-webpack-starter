@@ -97,7 +97,8 @@ module.exports = {
     if (process.env.NODE_ENV === 'production') {
       // 为生产环境修改配置...
     } else {
-      config.plugins.concat([new BundleAnalyzerPlugin(), gitRevisionPlugin]);
+      config.plugins.push(new BundleAnalyzerPlugin())
+      config.plugins.push(gitRevisionPlugin);
     }
   },
   // 是一个函数，会接收一个基于 webpack-chain 的 ChainableConfig 实例。允许对内部的 webpack 配置进行更细粒度的修改。
