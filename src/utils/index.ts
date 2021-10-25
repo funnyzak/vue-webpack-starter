@@ -1,8 +1,3 @@
-import api from './request';
-import { log } from './logger';
-
-export { api, log };
-
 export function rangeArray(size: number) {
   let _array: Array<number> = [];
   for (let i = 0; i < size; i++) {
@@ -11,19 +6,17 @@ export function rangeArray(size: number) {
   return _array;
 }
 
-export function queryString(obj?: Object) {
-  if (!obj) {
+export const queryString = (params?: Record<string, string>): string => {
+  if (!params || params === null) {
     return '';
   }
   return (
     '?' +
-    Object.keys(obj)
-      .map(function (k) {
-        return encodeURIComponent(k) + '=' + encodeURIComponent(obj[k]);
-      })
+    Object.keys(params)
+      .map((k) => encodeURIComponent(k) + '=' + encodeURIComponent(params[k]))
       .join('&')
   );
-}
+};
 
 /**
  * 将http转为https

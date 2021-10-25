@@ -2,7 +2,7 @@
 export const appName: string = 'APP Name';
 
 // baseURl
-export const baseURL: string = 'https://www.domain.com';
+export const baseURL: string = '';
 
 export const staticBaseURL: string = 'https://static.domain.com';
 

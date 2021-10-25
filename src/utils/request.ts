@@ -1,131 +1,146 @@
-import { baseURL, apiKey } from '@/config/app.config';
-import { HTTP_STATUS } from '@/config/constant';
-import { log } from './logger';
-import axios, { AxiosRequestConfig, AxiosResponse, AxiosRequestHeaders, Method } from 'axios';
+import { queryString } from '@/utils';
 
-export interface IRequestData {
-  url: string;
-  data?: Object;
-  contentType?: string;
-  headers?: Array<{ key: string; value: string }>;
-}
+import axios, {
+  AxiosRequestConfig,
+  AxiosResponse,
+  AxiosRequestHeaders,
+  AxiosInstance,
+  Method
+} from 'axios';
 
-// 定义可使用的Request方法
-export type RequestMethod =
-  | 'OPTIONS'
-  | 'GET'
-  | 'HEAD'
-  | 'POST'
-  | 'PUT'
-  | 'DELETE'
-  | 'TRACE'
-  | 'CONNECT';
+export type RequestBefore = (config: AxiosRequestConfig) => AxiosRequestConfig;
+export type ResponseHook = (response: AxiosResponse<unknown, any>) => any;
 
-const service = axios.create({
-  baseURL: baseURL, // api 的 base_url
-  timeout: 36000000, // request timeout
-  withCredentials: true // 允许携带cookie
-});
+export default class AxiosRequest {
+  requestConfig: AxiosRequestConfig<any>;
+  requestBefore?: RequestBefore;
+  responseHook?: ResponseHook;
 
-service.interceptors.request.use(
-  (config: AxiosRequestConfig) => {
-    let headers: AxiosRequestHeaders = config.headers ? config.headers : {};
-    headers['X-Requested-With'] = 'XMLHttpRequest';
-    headers['X-SS-API-KEY'] = apiKey;
-    config.headers = headers || {};
-    return config;
-  },
-  (error: any) => {
-    return Promise.reject('请求超时');
+  constructor(
+    requestConfig?: AxiosRequestConfig<any>,
+    requestBefore?: RequestBefore,
+    responseHook?: ResponseHook
+  ) {
+    this.requestConfig =
+      requestConfig && requestConfig !== null ? requestConfig : this.defaultConfig();
+    this.requestBefore = requestBefore;
+    this.responseHook = responseHook;
   }
-);
 
-service.interceptors.response.use(
-  (response: AxiosResponse<unknown, any>) => {
-    return new Promise<any>((resolve, reject) => {
-      if (response.status === 200) {
-        resolve(response.data);
-      } else {
-        switch (response.status) {
-          case 401:
-            return Promise.reject(new Error('无此权限'));
-          case 403:
-            return Promise.reject(new Error('禁止访问'));
-          case 404:
-            return Promise.reject(new Error('接口不存在'));
-          case 500:
-            return Promise.reject(new Error('接口发送了异常'));
-          case 504:
-            return Promise.reject(new Error('代理接口服务不可用'));
-          case 502:
-            return Promise.reject(new Error('接口代理出错'));
-          default:
-            return Promise.reject(new Error('请求失败'));
-        }
+  defaultConfig(): AxiosRequestConfig {
+    return {
+      baseURL: '',
+      timeout: 36000000,
+      withCredentials: true
+    };
+  }
+
+  requestContentTypeHeader(contentType?: string): AxiosRequestHeaders {
+    return !contentType ? {} : { 'content-type': contentType };
+  }
+
+  createInstance(): AxiosInstance {
+    const service = axios.create(this.requestConfig);
+
+    service.interceptors.request.use(
+      (config: AxiosRequestConfig) => {
+        config =
+          this.requestBefore && this.requestBefore !== null ? this.requestBefore(config) : config;
+
+        let headers: AxiosRequestHeaders = config.headers ? config.headers : {};
+        headers['X-Requested-With'] = 'XMLHttpRequest';
+        config.headers = headers || {};
+
+        return config;
+      },
+      (error: any) => {
+        return Promise.reject('请求超时');
       }
-    });
-  },
-  (error: any) => {
-    return Promise.reject('请求发生错误');
+    );
+
+    service.interceptors.response.use(
+      (response: AxiosResponse<unknown, any>) => {
+        return new Promise<any>((resolve, reject) => {
+          if (response.status === 200) {
+            if (this.responseHook && this.responseHook !== null) {
+              resolve(this.responseHook(response));
+            } else {
+              resolve(response.data);
+            }
+          } else {
+            switch (response.status) {
+              case 401:
+                return reject(new Error('无此权限'));
+              case 403:
+                return reject(new Error('禁止访问'));
+              case 404:
+                return reject(new Error('接口不存在'));
+              case 500:
+                return reject(new Error('接口发送了异常'));
+              case 504:
+                return reject(new Error('代理接口服务不可用'));
+              case 502:
+                return reject(new Error('接口代理出错'));
+              default:
+                return reject(new Error('请求失败'));
+            }
+          }
+        });
+      },
+      (error: any) => {
+        return Promise.reject(error);
+      }
+    );
+    return service;
   }
-);
 
-export const queryString = (params?: Record<string, string>): string => {
-  if (!params) {
-    return '';
-  }
-  return (
-    '?' +
-    Object.keys(params)
-      .map((k) => encodeURIComponent(k) + '=' + encodeURIComponent(params[k]))
-      .join('&')
-  );
-};
-
-export const requestContentTypeHeader = (contentType?: string): AxiosRequestHeaders => {
-  return !contentType ? {} : { 'content-type': contentType };
-};
-
-export default {
-  reeust(
-    method: Method,
+  request(
     url: string,
-    params: Record<string, string>,
+    method: Method,
+    params?: Record<string, string>,
     data?: any,
     contentType?: string
   ) {
-    return service.request({
+    return this.createInstance().request({
       url: url,
       method: method,
       params: queryString(params),
-      headers: requestContentTypeHeader(contentType),
-      data
-    });
-  },
-
-  get(url: string, params: Record<string, string>, contentType?: string) {
-    return service.get(url + queryString(params), {
-      headers: requestContentTypeHeader(contentType)
-    });
-  },
-
-  del(url: string, params: Record<string, string>, contentType?: string) {
-    return service.delete(url + queryString(params), {
-      headers: requestContentTypeHeader(contentType)
-    });
-  },
-
-  post(url: string, params: Record<string, string>, data?: any, contentType?: string) {
-    return service.post(url + queryString(params), {
-      headers: requestContentTypeHeader(contentType),
-      data
-    });
-  },
-
-  put(url: string, params: Record<string, string>, data?: any, contentType?: string) {
-    return service.put(url + queryString(params), {
-      headers: requestContentTypeHeader(contentType),
+      headers: this.requestContentTypeHeader(contentType),
       data
     });
   }
-};
+
+  get(
+    url: string,
+    params?: Record<string, string>,
+    contentType?: string
+  ): Promise<AxiosResponse<unknown, any>> {
+    return this.request(url, 'GET', params, null, contentType);
+  }
+
+  del(
+    url: string,
+    params?: Record<string, string>,
+    contentType?: string
+  ): Promise<AxiosResponse<unknown, any>> {
+    return this.request(url, 'DELETE', params, null, contentType);
+  }
+
+  post(
+    url: string,
+    params?: Record<string, string>,
+    data?: any,
+    contentType?: string
+  ): Promise<AxiosResponse<unknown, any>> {
+    return this.request(url, 'POST', params, data, contentType);
+  }
+
+  put(
+    url: string,
+    params?: Record<string, string>,
+    data?: any,
+    contentType?: string
+  ): Promise<AxiosResponse<unknown, any>> {
+    return this.request(url, 'PUT', params, data, contentType);
+  }
+}

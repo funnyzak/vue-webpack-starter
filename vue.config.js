@@ -117,7 +117,7 @@ module.exports = {
         target: 'https://request.worktile.com/6n6gHbBDL',
         changeOrigin: true,
         pathRewrite: {
-          '^/api/old-path': '/api/new-path', // rewrite path
+          '^/api/1': '/api/3', // rewrite path
           '^/api/remove/path': '/path' // remove base path
         }
       }
