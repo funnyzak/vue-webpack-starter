@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const processArgs = require('minimist')(process.argv.slice(2))
 
 const resolve = (dir) => path.resolve(__dirname, dir);
 
@@ -71,8 +72,18 @@ const getPages = () => {
   return pages
 };
 
+/**
+ * 如果以单模块启动，则只构建单页面
+ */
+let entryPages = getPages();
+if (processArgs.action === 'module' && processArgs.name && entryPages[processArgs.name]) {
+  const tmpPage = {};
+  tmpPage[processArgs.name] = entryPages[processArgs.name]
+  entryPages = tmpPage
+}
+
 module.exports = {
-  pages: getPages(),
+  pages: entryPages,
   // 使用相对路径
   publicPath: '',
   // 将 lint 错误输出为编译警告
@@ -90,6 +101,7 @@ module.exports = {
   //设置生成的 HTML 中 <link rel="stylesheet"> 和 <script> 标签的 crossorigin 属性。
   // crossorigin: 'anonymous',
   devServer: {
+    open: process.env.NODE_ENV === 'development',
     host: '0.0.0.0',
     port: '2085',
     overlay: {
