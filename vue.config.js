@@ -1,4 +1,16 @@
-const path = require('path')
+const path = require('path');
+const fs = require('fs');
+
+const resolve = (dir) => path.resolve(__dirname, dir);
+
+// 入口页面基础配置
+const pageBaseConfig = {
+  root: resolve('src/pages'),
+  entry: 'main.ts',
+  template: 'public/index.html',
+  filename: 'index.html'
+};
+
 // https://www.npmjs.com/package/webpack-bundle-analyzer
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 // https://www.npmjs.com/package/git-revision-webpack-plugin
@@ -28,29 +40,39 @@ const templateParameters = {
   gitInfo
 };
 
-function resolve(dir) {
-  return path.join(__dirname, dir)
-}
+// multi-page 模式, 获取所有page
+const getPages = () => {
+  // 同步读取pages下的文件
+  const files = fs.readdirSync(pageBaseConfig.root);
+  const pages = {}
+
+  for (let i = 0; i < files.length; i++) {
+    const pageInfo = { name: files[i] };
+    pageInfo.path = path.join(pageBaseConfig.root, pageInfo.name);
+
+    if (fs.lstatSync(pageInfo.path).isFile()) {
+      continue;
+    }
+    pageInfo.entry = path.join(pageInfo.path, pageBaseConfig.entry)
+    if (!fs.existsSync(pageInfo.entry)) {
+      continue;
+    }
+
+    const templatePath = path.join(pageInfo.path, 'index.html')
+    const template = fs.existsSync(templatePath) ? templatePath : pageBaseConfig.template
+
+    pages[pageInfo.name] = {
+      entry: pageInfo.entry,
+      template: template,
+      filename: pageInfo.name === 'index' ? 'index.html' : `${pageInfo.name}.html`,
+      title: pageInfo.name
+    }
+  }
+  return pages
+};
 
 module.exports = {
-  //  multi-page 模式, entry设置
-  pages: {
-    index: {
-      entry: 'src/index/main.ts',
-      template: 'public/index.html',
-      filename: 'index.html',
-      // template 中的 title 标签需要是 <title><%= htmlWebpackPlugin.options.title %></title>
-      title: '',
-      // 在这个页面中包含的块，默认情况下会包含
-      // 提取出来的通用 chunk 和 vendor chunk。
-      chunks: ['chunk-vendors', 'chunk-common', 'index']
-    },
-    // 当使用只有入口的字符串格式时，
-    // 模板会被推导为 `public/second.html`
-    // 并且如果找不到的话，就回退到 `public/index.html`。
-    // 输出文件名会被推导为 `second.html`。
-    second: 'src/second/main.ts'
-  },
+  pages: getPages(),
   // 使用相对路径
   publicPath: '',
   // 将 lint 错误输出为编译警告
@@ -82,9 +104,9 @@ module.exports = {
         changeOrigin: true,
         pathRewrite: {
           '^/api/old-path': '/api/new-path', // rewrite path
-          '^/api/remove/path': '/path', // remove base path
-        },
-      },
+          '^/api/remove/path': '/path' // remove base path
+        }
+      }
     }
   },
   // webpack 配置
@@ -92,25 +114,25 @@ module.exports = {
     // config.resolve.alias['@'] = 'src'
 
     // 注入变量
-    config.externals = Object.assign({}, config.externals, templateParameters)
+    config.externals = Object.assign({}, config.externals, templateParameters);
 
     if (process.env.NODE_ENV === 'production') {
       // 为生产环境修改配置...
     } else {
-      config.plugins.push(new BundleAnalyzerPlugin())
+      config.plugins.push(new BundleAnalyzerPlugin());
       config.plugins.push(gitRevisionPlugin);
     }
   },
   // 是一个函数，会接收一个基于 webpack-chain 的 ChainableConfig 实例。允许对内部的 webpack 配置进行更细粒度的修改。
   // https://cli.vuejs.org/zh/guide/webpack.html#%E9%93%BE%E5%BC%8F%E6%93%8D%E4%BD%9C-%E9%AB%98%E7%BA%A7
-  chainWebpack: config => {
+  chainWebpack: (config) => {
     config.module
       .rule('vue')
       .use('vue-loader')
-      .tap(options => {
+      .tap((options) => {
         // 修改它的选项...
-        return options
-      })
+        return options;
+      });
 
     // https://webpack.docschina.org/plugins/split-chunks-plugin/#splitchunkscachegroups
     // config.optimization.splitChunks({
