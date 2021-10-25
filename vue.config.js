@@ -1,6 +1,6 @@
 const path = require('path');
 const fs = require('fs');
-const processArgs = require('minimist')(process.argv.slice(2))
+const processArgs = require('minimist')(process.argv.slice(2));
 
 const resolve = (dir) => path.resolve(__dirname, dir);
 
@@ -13,14 +13,16 @@ const pageBaseConfig = {
 };
 
 // https://www.npmjs.com/package/webpack-bundle-analyzer
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 // https://www.npmjs.com/package/git-revision-webpack-plugin
 const GitRevisionPlugin = require('git-revision-webpack-plugin');
+
 const gitRevisionPlugin = new GitRevisionPlugin({
   branch: true
 });
 
 const package = require('./package.json');
+
 const gitInfo = {
   VERSION: gitRevisionPlugin.version(),
   COMMITHASH: gitRevisionPlugin.commithash(),
@@ -45,7 +47,7 @@ const templateParameters = {
 const getPages = () => {
   // 同步读取pages下的文件
   const files = fs.readdirSync(pageBaseConfig.root);
-  const pages = {}
+  const pages = {};
 
   for (let i = 0; i < files.length; i++) {
     const pageInfo = { name: files[i] };
@@ -54,22 +56,22 @@ const getPages = () => {
     if (fs.lstatSync(pageInfo.path).isFile()) {
       continue;
     }
-    pageInfo.entry = path.join(pageInfo.path, pageBaseConfig.entry)
+    pageInfo.entry = path.join(pageInfo.path, pageBaseConfig.entry);
     if (!fs.existsSync(pageInfo.entry)) {
       continue;
     }
 
-    const templatePath = path.join(pageInfo.path, 'index.html')
-    const template = fs.existsSync(templatePath) ? templatePath : pageBaseConfig.template
+    const templatePath = path.join(pageInfo.path, 'index.html');
+    const template = fs.existsSync(templatePath) ? templatePath : pageBaseConfig.template;
 
     pages[pageInfo.name] = {
       entry: pageInfo.entry,
-      template: template,
+      template,
       filename: pageInfo.name === 'index' ? 'index.html' : `${pageInfo.name}.html`,
       title: pageInfo.name
-    }
+    };
   }
-  return pages
+  return pages;
 };
 
 /**
@@ -78,8 +80,8 @@ const getPages = () => {
 let entryPages = getPages();
 if (processArgs.action === 'module' && processArgs.name && entryPages[processArgs.name]) {
   const tmpPage = {};
-  tmpPage[processArgs.name] = entryPages[processArgs.name]
-  entryPages = tmpPage
+  tmpPage[processArgs.name] = entryPages[processArgs.name];
+  entryPages = tmpPage;
 }
 
 module.exports = {
@@ -98,7 +100,7 @@ module.exports = {
   filenameHashing: true,
   // 生产环境不生成sourcemap
   productionSourceMap: false,
-  //设置生成的 HTML 中 <link rel="stylesheet"> 和 <script> 标签的 crossorigin 属性。
+  // 设置生成的 HTML 中 <link rel="stylesheet"> 和 <script> 标签的 crossorigin 属性。
   // crossorigin: 'anonymous',
   devServer: {
     open: process.env.NODE_ENV === 'development',
@@ -126,7 +128,7 @@ module.exports = {
     // config.resolve.alias['@'] = 'src'
 
     // 注入变量
-    config.externals = Object.assign({}, config.externals, templateParameters);
+    config.externals = { ...config.externals, ...templateParameters };
 
     if (process.env.NODE_ENV === 'production') {
       // 为生产环境修改配置...
@@ -141,10 +143,7 @@ module.exports = {
     config.module
       .rule('vue')
       .use('vue-loader')
-      .tap((options) => {
-        // 修改它的选项...
-        return options;
-      });
+      .tap((options) => options);
 
     // https://webpack.docschina.org/plugins/split-chunks-plugin/#splitchunkscachegroups
     // config.optimization.splitChunks({

@@ -24,7 +24,7 @@
     "serve:module": "cross-env node ./config/build.js --mode=serve module",
     "build:module": "cross-env node ./config/build.js --mode=build module",
     "test:unit": "vue-cli-service test:unit",
-    "eslint": "eslint --fix --cache",
+    "eslint": "eslint --fix --cache .",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {

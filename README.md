@@ -45,7 +45,7 @@ Vue **3.0.0** 快速开始脚手架。
 - 全部构建（所有）：`npm run build`
 - 仅启动**second**页：`npm run serve:module second`
 - 仅构建**second**页：`npm run build:module second`
-- Lint 格式化：`npm run lint`
+- Lint 格式化/检查：`npm run eslint`
 - 运行 jest 测试`npm run test:unit`
 
 ## 打包
