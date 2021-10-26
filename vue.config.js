@@ -56,11 +56,14 @@ const getPages = () => {
     if (fs.lstatSync(pageInfo.path).isFile()) {
       continue;
     }
+
+    // 如果没有入口文件，则跳过
     pageInfo.entry = path.join(pageInfo.path, pageBaseConfig.entry);
     if (!fs.existsSync(pageInfo.entry)) {
       continue;
     }
 
+    // 如果对应page下有index模板，则使用该模板，否则使用默认
     const templatePath = path.join(pageInfo.path, 'index.html');
     const template = fs.existsSync(templatePath) ? templatePath : pageBaseConfig.template;
 

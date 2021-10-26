@@ -33,7 +33,7 @@ Vue **3.0.0** 快速开始脚手架。
 
 ## 目录
 
-- `public`：静态资源文件夹
+- `public`：静态资源文件夹，打包时原始复制资源（不包含public）
 - `test`：测试
 - `src`：src, code here
 
