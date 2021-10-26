@@ -4,7 +4,7 @@
          src="@/assets/logo.png" />
     {{hello}}
     <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
-    {{apiResponseString}}
+    {{apiResponseString}}_{{currentStatus}}
   </div>
 </template>
 
@@ -13,6 +13,7 @@ import Component, { Options, Vue } from 'vue-class-component';
 import HelloWorld from '@/components/HelloWorld.vue'; // @ is an alias to /src
 import AxiosRequest from '@/utils/request';
 import { AxiosResponse } from 'axios';
+import store from '@/store';
 
 const api: AxiosRequest = new AxiosRequest({
   baseURL: 'https://reqbin.com/echo/post/json'
@@ -24,6 +25,7 @@ const api: AxiosRequest = new AxiosRequest({
 })
 export default class Home extends Vue {
   apiResponseString: string = '';
+  currentStatus: string = store.getters.status;
 
   apiDemo() {
     api.get('').then((res: AxiosResponse<any, any>) => {
