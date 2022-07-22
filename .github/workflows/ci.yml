@@ -71,7 +71,7 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/')
     steps:
       - name: ifttt Push
-        uses: funnyzak/ifttt-webhook-maker-action@master
+        uses: funnyzak/ifttt-webhook-action@v1
         with:
           key: ${{ secrets.IFTTT_KEY }}
           event: notify
