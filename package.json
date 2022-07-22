@@ -1,11 +1,11 @@
 {
-  "name": "vue-quick-start",
-  "description": "vue-quick-start",
+  "name": "vue-starter",
+  "description": "vue-starter",
   "version": "1.0.7",
   "private": true,
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/funnyzak/vue-quick-start.git"
+    "url": "git+https://github.com/funnyzak/vue-starter.git"
   },
   "keywords": [
     "vue",
@@ -15,9 +15,9 @@
   "author": "funnyzak <silenceace@gmail.com>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/funnyzak/vue-quick-start/issues"
+    "url": "https://github.com/funnyzak/vue-starter/issues"
   },
-  "homepage": "https://github.com/funnyzak/vue-quick-start#readme",
+  "homepage": "https://github.com/funnyzak/vue-starter#readme",
   "scripts": {
     "commit": "cz",
     "dev": "npm run serve",
