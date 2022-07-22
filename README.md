@@ -1,9 +1,22 @@
-# Vue Quick Start
+# Vue Starter
 
 [![action][ci-image]][ci-url]
+[![GitHub repo size][repo-size-image]][repository-url]
+[![Release Date][rle-image]][rle-url]
+[![GitHub last commit][last-commit-image]][repository-url]
 [![license][license-image]][repository-url]
 
-Vue **3.0.0** 脚手架项目，快速开始一个 Vue 项目开发。[预览](https://funnyzak.github.io/vue-quick-start/)。
+[ci-image]: https://img.shields.io/github/workflow/status/funnyzak/vue-starter/Release
+[ci-url]: https://github.com/funnyzak/vue-starter/actions
+[license-image]: https://img.shields.io/github/license/funnyzak/vue-starter.svg?style=flat-square
+[repository-url]: https://github.com/funnyzak/vue-starter
+[repo-size-image]: https://img.shields.io/github/repo-size/funnyzak/vue-starter
+[commit-activity-image]: https://img.shields.io/github/commit-activity/m/funnyzak/vue-starter?style=flat-square
+[last-commit-image]: https://img.shields.io/github/last-commit/funnyzak/vue-starter?style=flat-square
+[rle-image]: https://img.shields.io/github/release-date/funnyzak/vue-starter.svg
+[rle-url]: https://github.com/funnyzak/vue-starter/releases/latest
+
+Vue **3.0.0** 脚手架项目，快速开始一个 Vue 项目开发。[预览](https://funnyzak.github.io/vue-starter/)。
 
 ## 支持
 
@@ -19,11 +32,14 @@ Vue **3.0.0** 脚手架项目，快速开始一个 Vue 项目开发。[预览](h
 
 ## 使用
 
-使用的 Node 的构建版本为 **v16.6.2**，为避免冲突，建议使用此版本。可以使用 **_nvm_** 管理 Node 版本。
+使用的 Node 的构建版本为 **v16.16.0**，为避免冲突，建议使用此版本。可以使用 **_nvm_** 管理 Node 版本。
 
 ```bash
+# 切换node版本
+nvm use 16.16.0
+
 # 安装依赖
-npm install
+npm ci
 
 # 默认启动（所有）
 npm run serve
@@ -78,11 +94,14 @@ npm run test:unit
 - [webpack](https://webpack.docschina.org/guides/getting-started/)
 - [prettier](https://prettier.io/docs/en/index.html)
 
+## Contribution
+
+如果你有任何的想法或者意见，欢迎提 Issue 或者 PR。
+
+<a href="https://github.com/funnyzak/vue-starter/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=funnyzak/vue-starter" />
+</a>
+
 ## License
 
-MIT License © 2021 [funnyzak](https://github.com/funnyzak)
-
-[ci-image]: https://img.shields.io/github/workflow/status/funnyzak/vue-quick-start/Release
-[ci-url]: https://github.com/funnyzak/vue-quick-start/actions
-[license-image]: https://img.shields.io/github/license/funnyzak/vue-quick-start.svg?style=flat-square
-[repository-url]: https://github.com/funnyzak/vue-quick-start
+MIT License © 2022 [funnyzak](https://github.com/funnyzak)
