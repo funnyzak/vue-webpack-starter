@@ -16,7 +16,7 @@
 [rle-image]: https://img.shields.io/github/release-date/funnyzak/vue-starter.svg
 [rle-url]: https://github.com/funnyzak/vue-starter/releases/latest
 
-Vue **3.0.0** 脚手架项目，快速开始一个 Vue 项目开发。[预览](https://funnyzak.github.io/vue-starter/)。
+Vue **3.0.0** 脚手架项目，构建基于 Vue-Cli。用于快速开始一个 Vue 项目开发。[预览](https://funnyzak.github.io/vue-starter/)。
 
 ## 支持
 
