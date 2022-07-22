@@ -1,10 +1,9 @@
 <template>
   <div class="home">
-    <img alt="Vue logo"
-         src="@/assets/logo.png" />
-    {{hello}}
+    <img alt="Vue logo" src="@/assets/logo.png" />
+    {{ hello }}
     <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
-    {{apiResponseString}}_{{currentStatus}}
+    {{ apiResponseString }}_{{ currentStatus }}
   </div>
 </template>
 
@@ -24,12 +23,13 @@ const api: AxiosRequest = new AxiosRequest({
   }
 })
 export default class Home extends Vue {
-  apiResponseString: string = '';
+  apiResponseString = '';
+
   currentStatus: string = store.getters.status;
 
   apiDemo() {
-    api.get('').then((res: AxiosResponse<any, any>) => {
-      this.apiResponseString = JSON.stringify(res);
+    api.get('').then((_res: AxiosResponse<any, any>) => {
+      this.apiResponseString = JSON.stringify(_res);
     });
   }
 
