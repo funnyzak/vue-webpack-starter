@@ -4,12 +4,10 @@
   </div>
 </template>
 
-<script lang="javascript">
+<script lang="ts">
 export default {
-  data: () => {
-    return {
-      aboutText: "i'm eric"
-    };
-  }
+  data: () => ({
+    aboutText: "i'm eric"
+  })
 };
 </script>
